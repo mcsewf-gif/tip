@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>餐馆小费与总计计算器</title>
+    <!-- Web App Manifest -->
+    <link rel="manifest" id="manifest-placeholder">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="小费计算器">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135706.png">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom styling for sleek iOS/Android PWA feel */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between items-center pb-6">
+
+    <!-- Header / Navbar -->
+    <header class="w-full bg-indigo-600 text-white pt-10 pb-6 px-6 rounded-b-3xl shadow-lg transition-all duration-300">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight flex items-center gap-2">
+                    <i data-lucide="receipt" class="w-7 h-7"></i>
+                    餐馆小费计算器
+                </h1>
+                <p class="text-indigo-200 text-xs mt-1">含 13% 消费税 (HST) 自动计算</p>
+            </div>
+            <button id="reset-btn" class="p-2.5 bg-indigo-500/50 hover:bg-indigo-500 rounded-full transition active:scale-95 text-indigo-100" title="清空重新输入">
+                <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="w-full max-w-md px-4 -mt-4 space-y-4 flex-1">
+
+        <!-- Card 1: Input Pre-tax Amount -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
+                餐费税前金额 (Pre-Tax Amount)
+            </label>
+            <div class="relative flex items-center">
+                <span class="absolute left-4 text-2xl font-bold text-indigo-600">$</span>
+                <input 
+                    type="number" 
+                    id="pretax-input" 
+                    step="0.01" 
+                    min="0" 
+                    placeholder="0.00" 
+                    class="w-full pl-10 pr-4 py-3 text-3xl font-bold text-slate-800 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                />
+            </div>
+        </div>
+
+        <!-- Card 2: Tip Options -->
+        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-3">
+            <div class="flex justify-between items-center">
+                <label class="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    选择小费比例 (Tip %)
+                </label>
+                <span id="tip-selected-badge" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
+                    15%
+                </span>
+            </div>
+
+            <!-- Tip Buttons Grid -->
+            <div class="grid grid-cols-4 gap-2">
+                <button type="button" class="tip-btn py-3 rounded-xl font-bold text-sm border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition active:scale-95" data-tip="10">10%</button>
+                <button type="button" class="tip-btn py-3 rounded-xl font-bold text-sm border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition active:scale-95" data-tip="12">12%</button>
+                <button type="button" class="tip-btn py-3 rounded-xl font-bold text-sm border border-indigo-600 bg-indigo-600 text-white transition active:scale-95" data-tip="15">15%</button>
+                <button type="button" class="tip-btn py-3 rounded-xl font-bold text-sm border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition active:scale-95" data-tip="18">18%</button>
+            </div>
+
+            <!-- Custom Tip Input Option -->
+            <div class="flex items-center gap-2 pt-1">
+                <span class="text-xs text-slate-500">自定义比例:</span>
+                <div class="relative flex-1">
+                    <input 
+                        type="number" 
+                        id="custom-tip-input" 
+                        placeholder="其它" 
+                        step="0.5" 
+                        min="0"
+                        class="w-full px-3 py-2 text-sm font-semibold text-right pr-7 bg-slate-50 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <span class="absolute right-3 top-2 text-sm text-slate-400 font-semibold">%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3: Split Bill Option -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">平摊人数</div>
+                    <div class="text-sm font-bold text-slate-700"><span id="person-count-text">1</span> 人 AA</div>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 bg-slate-100 p-1 rounded-xl">
+                <button id="minus-person" class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-slate-700 active:scale-90 transition disabled:opacity-40" disabled>-</button>
+                <span id="person-display" class="font-bold text-slate-800 w-4 text-center">1</span>
+                <button id="plus-person" class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-slate-700 active:scale-90 transition">+</button>
+            </div>
+        </div>
+
+        <!-- Card 4: Summary Breakdown & Final Total -->
+        <div class="bg-indigo-900 text-white rounded-2xl p-5 shadow-xl space-y-4">
+            <div class="border-b border-indigo-800 pb-3 space-y-2 text-sm">
+                <div class="flex justify-between text-indigo-200">
+                    <span>税前金额 (Pre-Tax)</span>
+                    <span id="summary-pretax">$0.00</span>
+                </div>
+                <div class="flex justify-between text-indigo-200">
+                    <span>消费税 (Tax 13%)</span>
+                    <span id="summary-tax">$0.00</span>
+                </div>
+                <div class="flex justify-between text-indigo-200">
+                    <span>小费金额 (<span id="summary-tip-rate">15%</span>)</span>
+                    <span id="summary-tip">$0.00</span>
+                </div>
+            </div>
+
+            <!-- Total display -->
+            <div class="flex justify-between items-end">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-indigo-300 block">应付总金额 Total</span>
+                    <div class="text-3xl font-extrabold text-white tracking-tight" id="summary-total">$0.00</div>
+                </div>
+                <div id="per-person-container" class="text-right hidden">
+                    <span class="text-xs text-indigo-300 block">每人需付 (Per Person)</span>
+                    <span class="text-xl font-bold text-emerald-400" id="summary-per-person">$0.00</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-xs text-slate-400 mt-4 text-center">
+        支持离线使用 • 可添加到主屏幕 (PWA)
+    </footer>
+
+    <!-- Application Script -->
+    <script>
+        // State Management
+        let state = {
+            pretax: 0,
+            tipPercent: 15,
+            taxRate: 0.13, // 13% HST
+            peopleCount: 1
+        };
+
+        // DOM Elements
+        const pretaxInput = document.getElementById('pretax-input');
+        const customTipInput = document.getElementById('custom-tip-input');
+        const tipBtns = document.querySelectorAll('.tip-btn');
+        const tipBadge = document.getElementById('tip-selected-badge');
+        
+        const personDisplay = document.getElementById('person-display');
+        const personCountText = document.getElementById('person-count-text');
+        const minusPersonBtn = document.getElementById('minus-person');
+        const plusPersonBtn = document.getElementById('plus-person');
+        const resetBtn = document.getElementById('reset-btn');
+
+        const summaryPretax = document.getElementById('summary-pretax');
+        const summaryTax = document.getElementById('summary-tax');
+        const summaryTip = document.getElementById('summary-tip');
+        const summaryTipRate = document.getElementById('summary-tip-rate');
+        const summaryTotal = document.getElementById('summary-total');
+        const summaryPerPerson = document.getElementById('summary-per-person');
+        const perPersonContainer = document.getElementById('per-person-container');
+
+        // Formatter helper
+        const formatMoney = (val) => '$' + (isNaN(val) ? 0 : val).toFixed(2);
+
+        // Core Calculation Function
+        // Formula: (PreTax * 1.13) + (PreTax * Tip%)
+        function calculate() {
+            const pretax = parseFloat(state.pretax) || 0;
+            const taxAmount = pretax * state.taxRate;
+            const tipAmount = pretax * (state.tipPercent / 100);
+            const totalAmount = (pretax * (1 + state.taxRate)) + tipAmount;
+            const perPersonAmount = totalAmount / state.peopleCount;
+
+            // UI Update
+            summaryPretax.textContent = formatMoney(pretax);
+            summaryTax.textContent = formatMoney(taxAmount);
+            summaryTip.textContent = formatMoney(tipAmount);
+            summaryTipRate.textContent = `${state.tipPercent}%`;
+            summaryTotal.textContent = formatMoney(totalAmount);
+
+            if (state.peopleCount > 1) {
+                summaryPerPerson.textContent = formatMoney(perPersonAmount);
+                perPersonContainer.classList.remove('hidden');
+            } else {
+                perPersonContainer.classList.add('hidden');
+            }
+        }
+
+        // Event Listeners
+        pretaxInput.addEventListener('input', (e) => {
+            state.pretax = parseFloat(e.target.value) || 0;
+            calculate();
+        });
+
+        // Format two decimal places when focusing out
+        pretaxInput.addEventListener('blur', () => {
+            if (pretaxInput.value && !isNaN(pretaxInput.value)) {
+                pretaxInput.value = parseFloat(pretaxInput.value).toFixed(2);
+                state.pretax = parseFloat(pretaxInput.value);
+                calculate();
+            }
+        });
+
+        // Tip preset buttons toggle logic
+        tipBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tipBtns.forEach(b => {
+                    b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+                    b.classList.add('bg-slate-50', 'text-slate-700', 'border-slate-200');
+                });
+                btn.classList.remove('bg-slate-50', 'text-slate-700', 'border-slate-200');
+                btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+
+                customTipInput.value = '';
+                state.tipPercent = parseFloat(btn.getAttribute('data-tip'));
+                tipBadge.textContent = `${state.tipPercent}%`;
+                calculate();
+            });
+        });
+
+        // Custom Tip Input handler
+        customTipInput.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            if (!isNaN(val) && val >= 0) {
+                // Remove highlight from buttons
+                tipBtns.forEach(b => {
+                    b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
+                    b.classList.add('bg-slate-50', 'text-slate-700', 'border-slate-200');
+                });
+                state.tipPercent = val;
+                tipBadge.textContent = `${val}%`;
+                calculate();
+            }
+        });
+
+        // People split adjustment
+        minusPersonBtn.addEventListener('click', () => {
+            if (state.peopleCount > 1) {
+                state.peopleCount--;
+                updatePeopleUI();
+            }
+        });
+
+        plusPersonBtn.addEventListener('click', () => {
+            state.peopleCount++;
+            updatePeopleUI();
+        });
+
+        function updatePeopleUI() {
+            personDisplay.textContent = state.peopleCount;
+            personCountText.textContent = state.peopleCount;
+            minusPersonBtn.disabled = state.peopleCount <= 1;
+            calculate();
+        }
+
+        // Reset All
+        resetBtn.addEventListener('click', () => {
+            pretaxInput.value = '';
+            customTipInput.value = '';
+            state.pretax = 0;
+            state.peopleCount = 1;
+            // Default 15% click trigger
+            tipBtns[2].click();
+            updatePeopleUI();
+        });
+
+        // Dynamic Manifest Injection for PWA installation
+        const manifestData = {
+            "name": "餐馆小费与总计计算器",
+            "short_name": "小费计算器",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#4f46e5",
+            "icons": [
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/3135/3135706.png",
+                    "sizes": "512x512",
+                    "type": "image/png",
+                    "purpose": "any maskable"
+                }
+            ]
+        };
+        const stringManifest = JSON.stringify(manifestData);
+        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+
+        // Service Worker setup for offline capability
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'tip-calc-v1';
+                    self.addEventListener('install', (e) => {
+                        e.waitUntil(
+                            caches.open(CACHE_NAME).then((cache) => cache.addAll(['./']))
+                        );
+                    });
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(
+                            caches.match(e.request).then((res) => res || fetch(e.request))
+                        );
+                    });
+                `;
+                const swBlob = new Blob([swCode], { type: 'text/javascript' });
+                const swUrl = URL.createObjectURL(swBlob);
+                navigator.serviceWorker.register(swUrl).catch(err => console.log('SW reg error: ', err));
+            });
+        }
+
+        // Initialize icons and state calculation
+        window.onload = function() {
+            lucide.createIcons();
+            calculate();
+        };
+    </script>
+</body>
+</html>
