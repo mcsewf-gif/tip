@@ -6,8 +6,11 @@
   <title>餐馆小费计算器</title>
   <meta name="theme-color" content="#4f46e5">
   
-  <!-- Web App Manifest for PWA -->
-  <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIuahkOS8tOWwj+i0ueiupeeul+WZqCIsCiAgInNob3J0X25hbWUiIjogIuWwj+i0ueiupeeul+WZqCIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjhmOWZhIiwKICAidGhlbWVfY29sb3IiOiAiIzRmNDZlNSIKZX0=">
+  <!-- iOS 桌面快捷图标 (Apple Touch Icon) -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' style='background:%234f46e5;'><rect width='512' height='512' rx='100' fill='%234f46e5'/><path d='M160 120h192a24 24 0 0 1 24 24v224a24 24 0 0 1-24 24H160a24 24 0 0 1-24-24V144a24 24 0 0 1 24-24z' fill='none' stroke='white' stroke-width='24'/><path d='M180 160h152v60H180z' fill='white'/><circle cx='195' cy='275' r='18' fill='white'/><circle cx='256' cy='275' r='18' fill='white'/><circle cx='317' cy='275' r='18' fill='white'/><circle cx='195' cy='335' r='18' fill='white'/><circle cx='256' cy='335' r='18' fill='white'/><circle cx='317' cy='335' r='18' fill='white'/></svg>">
+
+  <!-- Web App Manifest (包含 PWA 图标配置) -->
+  <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIuahkOS8tOWwj+i0ueiupeeul+WZqCIsCiAgInNob3J0X25hbWUiIjogIuWwj+i0ueiupeeul+WZqCIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjhmOWZhIiwKICAidGhlbWVfY29sb3IiOiAiIzRmNDZlNSIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDt1dGY4LDxzdmcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyB2aWV3Qm94PScwIDAgNTEyIDUxMicgc3R5bGU9J2JhY2tncm91bmQ6JTIzNGY0NmU1Oyc+PHJlY3Qgd2lkdGg9JzUxMicgaGVpZ2h0PSc1MTInIHJ4PScxMDAnIGZpbGw9JyUyMzRmNDZlNScvPjxwYXRoIGQ9J00xNjAgMTIwaDE5MmEyNCAyNCAwIDAgMSAyNCAyNHYyMjRhMjQgMjQgMCAwIDEtMjQgMjRIMTYwYTI0IDI0IDAgMCAxLTI0LTI0VjE0NGEyNCAyNCAwIDAgMSAyNC0yNHonIGZpbGw9J25vbmUnIHN0cm9rZT0nd2hpdGUnIHN0cm9rZS13aWR0aD0nMjQnLz48cGF0aCBkPSdNMTgwIDE2MGgxNTJ2NjBIMTgwedicgZmlsbD0nd2hpdGUnLz48Y2lyY2xlIGN4PScxOTUnIGN5PScyNzUnIHI9JzE4JyBmaWxsPSd3aGl0ZScvPjxjaXJjbGUgY3g9JzI1NicgY3k9JzI3NScgcj0nMTgnIGZpbGw9J3doaXRlJy8+PGNpcmNsZSBjeD0nMzE3JyBjeT0nMjc1JyByPScxOCcgZmlsbD0nd2hpdGUnLz48Y2lyY2xlIGN4PScxOTUnIGN5PSczMzUnIHI9JzE4JyBmaWxsPSd3aGl0ZScvPjxjaXJjbGUgY3g9JzI1NicgY3k9JzMzNScgcj0nMTgnIGZpbGw9J3doaXRlJy8+PGNpcmNsZSBjeD0nMzE3JyBjeT0nMzM1JyByPScxOCcgZmlsbD0nd2hpdGUnLz48L3N2Zz4iLAogICAgICAic2l6ZXMiOiAiNTEyeDUxMiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
   
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -29,7 +32,7 @@
     }
   </script>
   <style>
-    /* Remove input spinner styles */
+    /* 移除数字输入框右侧上下箭头 */
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -63,7 +66,7 @@
   <!-- Main Form -->
   <main class="p-5 space-y-5 flex-1">
     
-    <!-- Pre-tax Input & Cash Paid Section -->
+    <!-- 金额输入区域 -->
     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
       <div>
         <label for="preTax" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
@@ -102,14 +105,14 @@
       </div>
     </div>
 
-    <!-- Tip Options -->
+    <!-- 小费比例选择 -->
     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
       <div class="flex justify-between items-center">
         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">选择小费比例 (TIP %)</label>
         <span id="selectedTipBadge" class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-full">12%</span>
       </div>
 
-      <!-- Quick Preset Buttons -->
+      <!-- 快速选择按钮 -->
       <div class="grid grid-cols-4 gap-2.5">
         <button type="button" onclick="selectTipPreset(10)" class="tip-btn py-3 rounded-xl border border-slate-200 font-bold text-slate-700 hover:border-brand-500 hover:text-brand-600 transition-all text-center" data-tip="10">10%</button>
         <button type="button" onclick="selectTipPreset(12)" class="tip-btn py-3 rounded-xl border border-slate-200 font-bold text-slate-700 hover:border-brand-500 hover:text-brand-600 transition-all text-center" data-tip="12">12%</button>
@@ -117,7 +120,7 @@
         <button type="button" onclick="selectTipPreset(18)" class="tip-btn py-3 rounded-xl border border-slate-200 font-bold text-slate-700 hover:border-brand-500 hover:text-brand-600 transition-all text-center" data-tip="18">18%</button>
       </div>
 
-      <!-- Custom Tip Input -->
+      <!-- 自定义比例 -->
       <div class="flex items-center gap-2 pt-1">
         <span class="text-xs font-medium text-slate-400 shrink-0">自定义比例:</span>
         <div class="relative flex-1">
@@ -135,7 +138,7 @@
       </div>
     </div>
 
-    <!-- Split Bill Option -->
+    <!-- AA 平摊人数 -->
     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
@@ -155,7 +158,7 @@
       </div>
     </div>
 
-    <!-- Summary & Result Card -->
+    <!-- 结算显示面板 -->
     <div class="bg-indigo-950 text-white p-6 rounded-3xl shadow-xl space-y-4">
       <div class="space-y-2 text-sm text-indigo-200 pb-4 border-b border-indigo-900/80">
         <div class="flex justify-between">
@@ -172,7 +175,7 @@
         </div>
       </div>
 
-      <!-- Total -->
+      <!-- 应付总额 -->
       <div class="pt-1 flex items-baseline justify-between">
         <div>
           <span class="text-xs uppercase tracking-wider text-indigo-300 font-bold block">应付总金额 TOTAL</span>
@@ -181,7 +184,7 @@
         <div id="totalAmount" class="text-4xl font-black text-white">$0.00</div>
       </div>
 
-      <!-- Change Output -->
+      <!-- 找零输出 -->
       <div class="pt-3 border-t border-indigo-900/80 flex items-baseline justify-between">
         <div>
           <span class="text-xs uppercase tracking-wider text-emerald-400 font-bold block">找零 CHANGE</span>
@@ -192,13 +195,12 @@
     </div>
   </main>
 
-  <!-- Script -->
+  <!-- JS 计算逻辑 -->
   <script>
-    let currentTipRate = 12; // 默认小费比例 12%
+    let currentTipRate = 12; // 默认小费 12%
     let people = 1;
     const TAX_RATE = 0.13;
 
-    // 初始化界面高亮
     document.addEventListener('DOMContentLoaded', () => {
       selectTipPreset(12);
     });
@@ -207,7 +209,6 @@
       currentTipRate = rate;
       document.getElementById('customTip').value = '';
       
-      // Update Button Styles
       document.querySelectorAll('.tip-btn').forEach(btn => {
         if (parseFloat(btn.dataset.tip) === rate) {
           btn.className = 'tip-btn py-3 rounded-xl font-bold bg-brand-600 text-white shadow-md shadow-brand-500/30 transition-all text-center';
@@ -251,16 +252,16 @@
       const preTaxInput = parseFloat(document.getElementById('preTax').value) || 0;
       const cashPaidInput = parseFloat(document.getElementById('cashPaid').value) || 0;
 
-      // 公式: (50 * 1.13) + (50 * Tip%)
+      // 计算公式: (税前 * 1.13) + (税前 * 小费%)
       const taxAmount = preTaxInput * TAX_RATE;
       const tipAmount = preTaxInput * (currentTipRate / 100);
       const grandTotal = preTaxInput + taxAmount + tipAmount;
       const perPersonTotal = grandTotal / people;
 
-      // 找零计算 = 实付金额 - 总金额
+      // 找零计算
       const change = cashPaidInput > 0 ? (cashPaidInput - grandTotal) : 0;
 
-      // UI 文本更新
+      // 更新界面 UI
       document.getElementById('selectedTipBadge').textContent = `${currentTipRate}%`;
       document.getElementById('summaryPreTax').textContent = `$${preTaxInput.toFixed(2)}`;
       document.getElementById('summaryTax').textContent = `$${taxAmount.toFixed(2)}`;
@@ -268,7 +269,6 @@
       document.getElementById('summaryTip').textContent = `$${tipAmount.toFixed(2)}`;
       document.getElementById('totalAmount').textContent = `$${perPersonTotal.toFixed(2)}`;
 
-      // 找零文本更新
       const changeEl = document.getElementById('changeAmount');
       if (cashPaidInput > 0) {
         if (change >= 0) {
@@ -276,7 +276,7 @@
           changeEl.className = "text-2xl font-bold text-emerald-400";
         } else {
           changeEl.textContent = `-$${Math.abs(change).toFixed(2)}`;
-          changeEl.className = "text-2xl font-bold text-rose-400"; // 不够付时显示红色负数
+          changeEl.className = "text-2xl font-bold text-rose-400";
         }
       } else {
         changeEl.textContent = "$0.00";
@@ -295,11 +295,11 @@
       selectTipPreset(12);
     }
 
-    // PWA Service Worker 注册
+    // PWA Offline Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         const swCode = `
-          const CACHE_NAME = 'tip-calc-v2';
+          const CACHE_NAME = 'tip-calc-v3';
           self.addEventListener('install', (e) => {
             e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
           });
