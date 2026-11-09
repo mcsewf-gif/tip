@@ -1,392 +1,317 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>餐馆小费与总计计算器</title>
-    <!-- Web App Manifest -->
-    <link rel="manifest" id="manifest-placeholder">
-    <meta name="theme-color" content="#4f46e5">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="小费计算器">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135706.png">
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        /* Custom styling for sleek iOS/Android PWA feel */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>餐馆小费计算器</title>
+  <meta name="theme-color" content="#4f46e5">
+  
+  <!-- Web App Manifest for PWA -->
+  <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIuahkOS8tOWwj+i0ueiupeeul+WZqCIsCiAgInNob3J0X25hbWUiIjogIuWwj+i0ueiupeeul+WZqCIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZjhmOWZhIiwKICAidGhlbWVfY29sb3IiOiAiIzRmNDZlNSIKZX0=">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eeeefd',
+              100: '#e0e0fc',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
         }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
-    </style>
+      }
+    }
+  </script>
+  <style>
+    /* Remove input spinner styles */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  </style>
 </head>
-<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between items-center pb-6">
+<body class="bg-slate-100 min-h-screen text-slate-800 flex flex-col justify-between max-w-md mx-auto shadow-2xl relative font-sans antialiased selection:bg-brand-500 selection:text-white">
 
-    <!-- Header / Navbar -->
-    <header class="w-full bg-indigo-600 text-white pt-10 pb-6 px-6 rounded-b-3xl shadow-lg transition-all duration-300">
-        <div class="max-w-md mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight flex items-center gap-2">
-                    <i data-lucide="receipt" class="w-7 h-7"></i>
-                    餐馆小费计算器
-                </h1>
-                <p class="text-indigo-200 text-xs mt-1">含 13% 消费税 (HST) 自动计算</p>
-            </div>
-            <button id="reset-btn" class="p-2.5 bg-indigo-500/50 hover:bg-indigo-500 rounded-full transition active:scale-95 text-indigo-100" title="清空重新输入">
-                <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
-            </button>
+  <!-- Header -->
+  <header class="bg-gradient-to-br from-brand-600 to-indigo-700 text-white p-6 rounded-b-3xl shadow-lg relative">
+    <div class="flex justify-between items-center mb-2">
+      <h1 class="text-2xl font-bold flex items-center gap-2">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+        </svg>
+        餐馆小费计算器
+      </h1>
+      <button onclick="resetCalculator()" class="p-2 hover:bg-white/10 rounded-full transition-colors" title="重置">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+        </svg>
+      </button>
+    </div>
+    <p class="text-indigo-200 text-xs font-medium">含 13% 消费税 (HST) 自动计算</p>
+  </header>
+
+  <!-- Main Form -->
+  <main class="p-5 space-y-5 flex-1">
+    
+    <!-- Pre-tax Input & Cash Paid Section -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
+      <div>
+        <label for="preTax" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          餐费税前金额 (PRE-TAX AMOUNT)
+        </label>
+        <div class="relative flex items-center">
+          <span class="absolute left-4 text-brand-600 font-bold text-2xl">$</span>
+          <input 
+            type="number" 
+            id="preTax" 
+            step="0.01" 
+            placeholder="0.00" 
+            class="w-full pl-9 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[1.8rem] font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all placeholder:text-slate-300"
+            oninput="calculate()"
+            onblur="formatCurrencyInput(this)"
+          >
         </div>
-    </header>
+      </div>
 
-    <!-- Main Content Container -->
-    <main class="w-full max-w-md px-4 -mt-4 space-y-4 flex-1">
-
-        <!-- Card 1: Input Pre-tax Amount & Cash Paid -->
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-4">
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-                    餐费税前金额 (Pre-Tax Amount)
-                </label>
-                <div class="relative flex items-center">
-                    <span class="absolute left-4 text-2xl font-bold text-indigo-600">$</span>
-                    <input 
-                        type="number" 
-                        id="pretax-input" 
-                        step="0.01" 
-                        min="0" 
-                        placeholder="0.00" 
-                        class="w-full pl-10 pr-4 py-3 text-3xl font-bold text-slate-800 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
-                    />
-                </div>
-            </div>
-
-            <!-- New Input Field for Cash Paid to Server -->
-            <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-                    实付/给服务员金额 (Cash / Amount Paid)
-                </label>
-                <div class="relative flex items-center">
-                    <span class="absolute left-4 text-xl font-bold text-slate-400">$</span>
-                    <input 
-                        type="number" 
-                        id="paid-input" 
-                        step="0.01" 
-                        min="0" 
-                        placeholder="0.00" 
-                        class="w-full pl-9 pr-4 py-2.5 text-xl font-bold text-slate-800 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
-                    />
-                </div>
-            </div>
+      <div>
+        <label for="cashPaid" class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+          实付/给服务员金额 (CASH / AMOUNT PAID)
+        </label>
+        <div class="relative flex items-center">
+          <span class="absolute left-4 text-brand-600 font-bold text-2xl">$</span>
+          <input 
+            type="number" 
+            id="cashPaid" 
+            step="0.01" 
+            placeholder="0.00" 
+            class="w-full pl-9 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-[1.8rem] font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:bg-white transition-all placeholder:text-slate-300"
+            oninput="calculate()"
+            onblur="formatCurrencyInput(this)"
+          >
         </div>
+      </div>
+    </div>
 
-        <!-- Card 2: Tip Options -->
-        <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80 space-y-3">
-            <div class="flex justify-between items-center">
-                <label class="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                    选择小费比例 (Tip %)
-                </label>
-                <span id="tip-selected-badge" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full">
-                    12%
-                </span>
-            </div>
+    <!-- Tip Options -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
+      <div class="flex justify-between items-center">
+        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">选择小费比例 (TIP %)</label>
+        <span id="selectedTipBadge" class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-full">12%</span>
+      </div>
 
-            <!-- Tip Buttons Grid (12% set as default) -->
-            <div class="grid grid-cols-4 gap-2">
-                <button type="button" class="tip-btn py-3 rounded-xl font-bold text-sm border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition active:scale-95" data-tip="10">10%</button>
-                <button type="button" class="tip-btn py-3 rounded-xl font-bold text-sm border border-indigo-600 bg-indigo-600 text-white transition active:scale-95" data-tip="12">12%</button>
-                <button type="button" class="tip-btn py-3 rounded-xl font-bold text-sm border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition active:scale-95" data-tip="15">15%</button>
-                <button type="button" class="tip-btn py-3 rounded-xl font-bold text-sm border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 transition active:scale-95" data-tip="18">18%</button>
-            </div>
+      <!-- Quick Preset Buttons -->
+      <div class="grid grid-cols-4 gap-2.5">
+        <button type="button" onclick="selectTipPreset(10)" class="tip-btn py-3 rounded-xl border border-slate-200 font-bold text-slate-700 hover:border-brand-500 hover:text-brand-600 transition-all text-center" data-tip="10">10%</button>
+        <button type="button" onclick="selectTipPreset(12)" class="tip-btn py-3 rounded-xl border border-slate-200 font-bold text-slate-700 hover:border-brand-500 hover:text-brand-600 transition-all text-center" data-tip="12">12%</button>
+        <button type="button" onclick="selectTipPreset(15)" class="tip-btn py-3 rounded-xl border border-slate-200 font-bold text-slate-700 hover:border-brand-500 hover:text-brand-600 transition-all text-center" data-tip="15">15%</button>
+        <button type="button" onclick="selectTipPreset(18)" class="tip-btn py-3 rounded-xl border border-slate-200 font-bold text-slate-700 hover:border-brand-500 hover:text-brand-600 transition-all text-center" data-tip="18">18%</button>
+      </div>
 
-            <!-- Custom Tip Input Option -->
-            <div class="flex items-center gap-2 pt-1">
-                <span class="text-xs text-slate-500">自定义比例:</span>
-                <div class="relative flex-1">
-                    <input 
-                        type="number" 
-                        id="custom-tip-input" 
-                        placeholder="其它" 
-                        step="0.5" 
-                        min="0"
-                        class="w-full px-3 py-2 text-sm font-semibold text-right pr-7 bg-slate-50 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                    <span class="absolute right-3 top-2 text-sm text-slate-400 font-semibold">%</span>
-                </div>
-            </div>
+      <!-- Custom Tip Input -->
+      <div class="flex items-center gap-2 pt-1">
+        <span class="text-xs font-medium text-slate-400 shrink-0">自定义比例:</span>
+        <div class="relative flex-1">
+          <input 
+            type="number" 
+            id="customTip" 
+            placeholder="其它" 
+            min="0"
+            max="100"
+            class="w-full pr-8 text-right py-2 px-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            oninput="handleCustomTipInput()"
+          >
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold text-sm">%</span>
         </div>
+      </div>
+    </div>
 
-        <!-- Card 3: Split Bill Option -->
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-                    <i data-lucide="users" class="w-5 h-5"></i>
-                </div>
-                <div>
-                    <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">平摊人数</div>
-                    <div class="text-sm font-bold text-slate-700"><span id="person-count-text">1</span> 人 AA</div>
-                </div>
-            </div>
-            <div class="flex items-center gap-3 bg-slate-100 p-1 rounded-xl">
-                <button id="minus-person" class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-slate-700 active:scale-90 transition disabled:opacity-40" disabled>-</button>
-                <span id="person-display" class="font-bold text-slate-800 w-4 text-center">1</span>
-                <button id="plus-person" class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-slate-700 active:scale-90 transition">+</button>
-            </div>
+    <!-- Split Bill Option -->
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+          </svg>
         </div>
-
-        <!-- Card 4: Summary Breakdown & Final Total -->
-        <div class="bg-indigo-900 text-white rounded-2xl p-5 shadow-xl space-y-4">
-            <div class="border-b border-indigo-800 pb-3 space-y-2 text-sm">
-                <div class="flex justify-between text-indigo-200">
-                    <span>税前金额 (Pre-Tax)</span>
-                    <span id="summary-pretax">$0.00</span>
-                </div>
-                <div class="flex justify-between text-indigo-200">
-                    <span>消费税 (Tax 13%)</span>
-                    <span id="summary-tax">$0.00</span>
-                </div>
-                <div class="flex justify-between text-indigo-200">
-                    <span>小费金额 (<span id="summary-tip-rate">12%</span>)</span>
-                    <span id="summary-tip">$0.00</span>
-                </div>
-            </div>
-
-            <!-- Total display -->
-            <div class="flex justify-between items-end">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-indigo-300 block">应付总金额 TOTAL</span>
-                    <div class="text-3xl font-extrabold text-white tracking-tight" id="summary-total">$0.00</div>
-                </div>
-                <div id="per-person-container" class="text-right hidden">
-                    <span class="text-xs text-indigo-300 block">每人需付 (Per Person)</span>
-                    <span class="text-xl font-bold text-emerald-400" id="summary-per-person">$0.00</span>
-                </div>
-            </div>
-
-            <!-- New Change Output Field -->
-            <div class="border-t border-indigo-800/80 pt-3 flex justify-between items-center">
-                <span class="text-xs font-semibold uppercase tracking-wider text-indigo-300">找零 (Change)</span>
-                <div class="text-xl font-bold text-emerald-400" id="summary-change">$0.00</div>
-            </div>
+        <div>
+          <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">平摊人数</div>
+          <div id="splitLabel" class="text-xs text-slate-400 font-medium">1 人 AA</div>
         </div>
-    </main>
+      </div>
+      <div class="flex items-center gap-3 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
+        <button onclick="changePeople(-1)" class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">-</button>
+        <span id="peopleCount" class="font-bold text-slate-800 w-6 text-center">1</span>
+        <button onclick="changePeople(1)" class="w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">+</button>
+      </div>
+    </div>
 
-    <!-- Application Script -->
-    <script>
-        // State Management (Default tip set to 12%)
-        let state = {
-            pretax: 0,
-            paid: 0,
-            tipPercent: 12,
-            taxRate: 0.13, // 13% HST
-            peopleCount: 1
-        };
+    <!-- Summary & Result Card -->
+    <div class="bg-indigo-950 text-white p-6 rounded-3xl shadow-xl space-y-4">
+      <div class="space-y-2 text-sm text-indigo-200 pb-4 border-b border-indigo-900/80">
+        <div class="flex justify-between">
+          <span>税前金额 (Pre-Tax)</span>
+          <span id="summaryPreTax" class="font-semibold text-white">$0.00</span>
+        </div>
+        <div class="flex justify-between">
+          <span>消费税 (Tax 13%)</span>
+          <span id="summaryTax" class="font-semibold text-white">$0.00</span>
+        </div>
+        <div class="flex justify-between">
+          <span id="summaryTipLabel">小费金额 (12%)</span>
+          <span id="summaryTip" class="font-semibold text-white">$0.00</span>
+        </div>
+      </div>
 
-        // DOM Elements
-        const pretaxInput = document.getElementById('pretax-input');
-        const paidInput = document.getElementById('paid-input');
-        const customTipInput = document.getElementById('custom-tip-input');
-        const tipBtns = document.querySelectorAll('.tip-btn');
-        const tipBadge = document.getElementById('tip-selected-badge');
-        
-        const personDisplay = document.getElementById('person-display');
-        const personCountText = document.getElementById('person-count-text');
-        const minusPersonBtn = document.getElementById('minus-person');
-        const plusPersonBtn = document.getElementById('plus-person');
-        const resetBtn = document.getElementById('reset-btn');
+      <!-- Total -->
+      <div class="pt-1 flex items-baseline justify-between">
+        <div>
+          <span class="text-xs uppercase tracking-wider text-indigo-300 font-bold block">应付总金额 TOTAL</span>
+          <span id="perPersonLabel" class="text-[10px] text-indigo-400 hidden">(每人应付)</span>
+        </div>
+        <div id="totalAmount" class="text-4xl font-black text-white">$0.00</div>
+      </div>
 
-        const summaryPretax = document.getElementById('summary-pretax');
-        const summaryTax = document.getElementById('summary-tax');
-        const summaryTip = document.getElementById('summary-tip');
-        const summaryTipRate = document.getElementById('summary-tip-rate');
-        const summaryTotal = document.getElementById('summary-total');
-        const summaryPerPerson = document.getElementById('summary-per-person');
-        const perPersonContainer = document.getElementById('per-person-container');
-        const summaryChange = document.getElementById('summary-change');
+      <!-- Change Output -->
+      <div class="pt-3 border-t border-indigo-900/80 flex items-baseline justify-between">
+        <div>
+          <span class="text-xs uppercase tracking-wider text-emerald-400 font-bold block">找零 CHANGE</span>
+          <span class="text-[10px] text-indigo-400">(实付 - 总额)</span>
+        </div>
+        <div id="changeAmount" class="text-2xl font-bold text-emerald-400">$0.00</div>
+      </div>
+    </div>
+  </main>
 
-        // Formatter helper
-        const formatMoney = (val) => '$' + (isNaN(val) ? 0 : val).toFixed(2);
+  <!-- Script -->
+  <script>
+    let currentTipRate = 12; // 默认小费比例 12%
+    let people = 1;
+    const TAX_RATE = 0.13;
 
-        // Core Calculation Function
-        function calculate() {
-            const pretax = parseFloat(state.pretax) || 0;
-            const paid = parseFloat(state.paid) || 0;
-            const taxAmount = pretax * state.taxRate;
-            const tipAmount = pretax * (state.tipPercent / 100);
-            const totalAmount = (pretax * (1 + state.taxRate)) + tipAmount;
-            const perPersonAmount = totalAmount / state.peopleCount;
-            const changeAmount = paid > totalAmount ? paid - totalAmount : 0;
+    // 初始化界面高亮
+    document.addEventListener('DOMContentLoaded', () => {
+      selectTipPreset(12);
+    });
 
-            // UI Update
-            summaryPretax.textContent = formatMoney(pretax);
-            summaryTax.textContent = formatMoney(taxAmount);
-            summaryTip.textContent = formatMoney(tipAmount);
-            summaryTipRate.textContent = `${state.tipPercent}%`;
-            summaryTotal.textContent = formatMoney(totalAmount);
-            summaryChange.textContent = formatMoney(changeAmount);
-
-            if (state.peopleCount > 1) {
-                summaryPerPerson.textContent = formatMoney(perPersonAmount);
-                perPersonContainer.classList.remove('hidden');
-            } else {
-                perPersonContainer.classList.add('hidden');
-            }
+    function selectTipPreset(rate) {
+      currentTipRate = rate;
+      document.getElementById('customTip').value = '';
+      
+      // Update Button Styles
+      document.querySelectorAll('.tip-btn').forEach(btn => {
+        if (parseFloat(btn.dataset.tip) === rate) {
+          btn.className = 'tip-btn py-3 rounded-xl font-bold bg-brand-600 text-white shadow-md shadow-brand-500/30 transition-all text-center';
+        } else {
+          btn.className = 'tip-btn py-3 rounded-xl border border-slate-200 font-bold text-slate-700 hover:border-brand-500 hover:text-brand-600 transition-all text-center';
         }
+      });
 
-        // Event Listeners
-        pretaxInput.addEventListener('input', (e) => {
-            state.pretax = parseFloat(e.target.value) || 0;
-            calculate();
+      calculate();
+    }
+
+    function handleCustomTipInput() {
+      const customVal = parseFloat(document.getElementById('customTip').value);
+      if (!isNaN(customVal) && customVal >= 0) {
+        currentTipRate = customVal;
+        document.querySelectorAll('.tip-btn').forEach(btn => {
+          btn.className = 'tip-btn py-3 rounded-xl border border-slate-200 font-bold text-slate-700 hover:border-brand-500 hover:text-brand-600 transition-all text-center';
         });
+        calculate();
+      } else if (document.getElementById('customTip').value === '') {
+        selectTipPreset(12);
+      }
+    }
 
-        pretaxInput.addEventListener('blur', () => {
-            if (pretaxInput.value && !isNaN(pretaxInput.value)) {
-                pretaxInput.value = parseFloat(pretaxInput.value).toFixed(2);
-                state.pretax = parseFloat(pretaxInput.value);
-                calculate();
-            }
-        });
+    function changePeople(delta) {
+      people = Math.max(1, people + delta);
+      document.getElementById('peopleCount').textContent = people;
+      document.getElementById('splitLabel').textContent = people > 1 ? `${people} 人平摊` : '1 人 AA';
+      document.getElementById('perPersonLabel').classList.toggle('hidden', people === 1);
+      calculate();
+    }
 
-        // Paid input handler
-        paidInput.addEventListener('input', (e) => {
-            state.paid = parseFloat(e.target.value) || 0;
-            calculate();
-        });
+    function formatCurrencyInput(input) {
+      const val = parseFloat(input.value);
+      if (!isNaN(val) && val > 0) {
+        input.value = val.toFixed(2);
+      }
+    }
 
-        paidInput.addEventListener('blur', () => {
-            if (paidInput.value && !isNaN(paidInput.value)) {
-                paidInput.value = parseFloat(paidInput.value).toFixed(2);
-                state.paid = parseFloat(paidInput.value);
-                calculate();
-            }
-        });
+    function calculate() {
+      const preTaxInput = parseFloat(document.getElementById('preTax').value) || 0;
+      const cashPaidInput = parseFloat(document.getElementById('cashPaid').value) || 0;
 
-        // Tip preset buttons toggle logic
-        tipBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tipBtns.forEach(b => {
-                    b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
-                    b.classList.add('bg-slate-50', 'text-slate-700', 'border-slate-200');
-                });
-                btn.classList.remove('bg-slate-50', 'text-slate-700', 'border-slate-200');
-                btn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+      // 公式: (50 * 1.13) + (50 * Tip%)
+      const taxAmount = preTaxInput * TAX_RATE;
+      const tipAmount = preTaxInput * (currentTipRate / 100);
+      const grandTotal = preTaxInput + taxAmount + tipAmount;
+      const perPersonTotal = grandTotal / people;
 
-                customTipInput.value = '';
-                state.tipPercent = parseFloat(btn.getAttribute('data-tip'));
-                tipBadge.textContent = `${state.tipPercent}%`;
-                calculate();
-            });
-        });
+      // 找零计算 = 实付金额 - 总金额
+      const change = cashPaidInput > 0 ? (cashPaidInput - grandTotal) : 0;
 
-        // Custom Tip Input handler
-        customTipInput.addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value);
-            if (!isNaN(val) && val >= 0) {
-                tipBtns.forEach(b => {
-                    b.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600');
-                    b.classList.add('bg-slate-50', 'text-slate-700', 'border-slate-200');
-                });
-                state.tipPercent = val;
-                tipBadge.textContent = `${val}%`;
-                calculate();
-            }
-        });
+      // UI 文本更新
+      document.getElementById('selectedTipBadge').textContent = `${currentTipRate}%`;
+      document.getElementById('summaryPreTax').textContent = `$${preTaxInput.toFixed(2)}`;
+      document.getElementById('summaryTax').textContent = `$${taxAmount.toFixed(2)}`;
+      document.getElementById('summaryTipLabel').textContent = `小费金额 (${currentTipRate}%)`;
+      document.getElementById('summaryTip').textContent = `$${tipAmount.toFixed(2)}`;
+      document.getElementById('totalAmount').textContent = `$${perPersonTotal.toFixed(2)}`;
 
-        // People split adjustment
-        minusPersonBtn.addEventListener('click', () => {
-            if (state.peopleCount > 1) {
-                state.peopleCount--;
-                updatePeopleUI();
-            }
-        });
-
-        plusPersonBtn.addEventListener('click', () => {
-            state.peopleCount++;
-            updatePeopleUI();
-        });
-
-        function updatePeopleUI() {
-            personDisplay.textContent = state.peopleCount;
-            personCountText.textContent = state.peopleCount;
-            minusPersonBtn.disabled = state.peopleCount <= 1;
-            calculate();
+      // 找零文本更新
+      const changeEl = document.getElementById('changeAmount');
+      if (cashPaidInput > 0) {
+        if (change >= 0) {
+          changeEl.textContent = `$${change.toFixed(2)}`;
+          changeEl.className = "text-2xl font-bold text-emerald-400";
+        } else {
+          changeEl.textContent = `-$${Math.abs(change).toFixed(2)}`;
+          changeEl.className = "text-2xl font-bold text-rose-400"; // 不够付时显示红色负数
         }
+      } else {
+        changeEl.textContent = "$0.00";
+        changeEl.className = "text-2xl font-bold text-emerald-400";
+      }
+    }
 
-        // Reset All
-        resetBtn.addEventListener('click', () => {
-            pretaxInput.value = '';
-            paidInput.value = '';
-            customTipInput.value = '';
-            state.pretax = 0;
-            state.paid = 0;
-            state.peopleCount = 1;
-            // Default 12% click trigger (index 1)
-            tipBtns[1].click();
-            updatePeopleUI();
-        });
+    function resetCalculator() {
+      document.getElementById('preTax').value = '';
+      document.getElementById('cashPaid').value = '';
+      document.getElementById('customTip').value = '';
+      people = 1;
+      document.getElementById('peopleCount').textContent = '1';
+      document.getElementById('splitLabel').textContent = '1 人 AA';
+      document.getElementById('perPersonLabel').classList.add('hidden');
+      selectTipPreset(12);
+    }
 
-        // Dynamic Manifest Injection for PWA installation
-        const manifestData = {
-            "name": "餐馆小费与总计计算器",
-            "short_name": "小费计算器",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#ffffff",
-            "theme_color": "#4f46e5",
-            "icons": [
-                {
-                    "src": "https://cdn-icons-png.flaticon.com/512/3135/3135706.png",
-                    "sizes": "512x512",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                }
-            ]
-        };
-        const stringManifest = JSON.stringify(manifestData);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
-        document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
-
-        // Service Worker setup for offline capability
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'tip-calc-v1';
-                    self.addEventListener('install', (e) => {
-                        e.waitUntil(
-                            caches.open(CACHE_NAME).then((cache) => cache.addAll(['./']))
-                        );
-                    });
-                    self.addEventListener('fetch', (e) => {
-                        e.respondWith(
-                            caches.match(e.request).then((res) => res || fetch(e.request))
-                        );
-                    });
-                `;
-                const swBlob = new Blob([swCode], { type: 'text/javascript' });
-                const swUrl = URL.createObjectURL(swBlob);
-                navigator.serviceWorker.register(swUrl).catch(err => console.log('SW reg error: ', err));
-            });
-        }
-
-        // Initialize icons and state calculation
-        window.onload = function() {
-            lucide.createIcons();
-            calculate();
-        };
-    </script>
+    // PWA Service Worker 注册
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        const swCode = `
+          const CACHE_NAME = 'tip-calc-v2';
+          self.addEventListener('install', (e) => {
+            e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
+          });
+          self.addEventListener('fetch', (e) => {
+            e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
+          });
+        `;
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl).catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>
