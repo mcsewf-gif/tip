@@ -109,7 +109,7 @@
     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 space-y-4">
       <div class="flex justify-between items-center">
         <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">选择小费比例 (TIP %)</label>
-        <span id="selectedTipBadge" class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-full">12%</span>
+        <span id="selectedTipBadge" class="text-xs font-bold text-brand-600 bg-brand-50 px-2.5 py-1 rounded-full">10%</span>
       </div>
 
       <!-- 快速选择按钮 -->
@@ -150,7 +150,7 @@
           <span id="summaryTax" class="font-semibold text-white">$0.00</span>
         </div>
         <div class="flex justify-between">
-          <span id="summaryTipLabel">小费金额 (12%)</span>
+          <span id="summaryTipLabel">小费金额 (10%)</span>
           <span id="summaryTip" class="font-semibold text-white">$0.00</span>
         </div>
       </div>
@@ -174,7 +174,7 @@
       </div>
     </div>
 
-    <!-- AA 平摊人数（已防溢出并调整换行） -->
+    <!-- AA 平摊人数 -->
     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between gap-2 overflow-hidden">
       <div class="flex items-center gap-2.5 min-w-0 flex-1">
         <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 shrink-0">
@@ -197,12 +197,12 @@
 
   <!-- JS 计算逻辑 -->
   <script>
-    let currentTipRate = 12; // 默认小费 12%
+    let currentTipRate = 10; // 默认小费修改为 10%
     let people = 1;
     const TAX_RATE = 0.13;
 
     document.addEventListener('DOMContentLoaded', () => {
-      selectTipPreset(12);
+      selectTipPreset(10);
     });
 
     function selectTipPreset(rate) {
@@ -229,7 +229,7 @@
         });
         calculate();
       } else if (document.getElementById('customTip').value === '') {
-        selectTipPreset(12);
+        selectTipPreset(10);
       }
     }
 
@@ -292,14 +292,14 @@
       document.getElementById('peopleCount').textContent = '1';
       document.getElementById('splitLabel').textContent = '1 人 AA';
       document.getElementById('perPersonLabel').classList.add('hidden');
-      selectTipPreset(12);
+      selectTipPreset(10);
     }
 
     // PWA Offline Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         const swCode = `
-          const CACHE_NAME = 'tip-calc-v5';
+          const CACHE_NAME = 'tip-calc-v6';
           self.addEventListener('install', (e) => {
             e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
           });
